@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = "postgresql://postgres:anshul@localhost:5432/postgres"
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  viewCount Int      @default(0)
+  authorId  Int?
+  author    User?    @relation(fields: [authorId], references: [id])
+}
+
+model Users {
+  entity_id   Int       @id @default(autoincrement())
+  username    String    @db.VarChar(255)
+  first_name  String?   @db.VarChar(255)
+  middle_name String?   @db.VarChar(255)
+  last_name   String?   @db.VarChar(255)
+  role_id     Int?      @db.SmallInt
+  location_id Int?      @db.SmallInt
+  client_id   Int?
+  created_at  DateTime? @db.Timetz(6)
+  updated_at  DateTime? @db.Timetz(6)
+  created_by  DateTime? @db.Timetz(6)
+  updated_by  DateTime? @db.Timetz(6)
+  manager_id  Int?
+  email       String?   @db.VarChar(255)
+  gender_     Int?      @map("gender ") @db.SmallInt
+  client      client?   @relation(fields: [client_id], references: [entity_id], onDelete: NoAction, onUpdate: NoAction, map: "clientid")
+}
+
+model Location {
+  entity_id Int     @id @default(autoincrement())
+  location  String  @unique(map: "Location1") @db.VarChar(255)
+  state     String? @db.VarChar(255)
+}
+
+model Roles {
+  entity_id Int    @id @default(autoincrement())
+  role      String @unique(map: "roles_id") @db.VarChar(255)
+}
+
+model client {
+  entity_id Int     @id @default(autoincrement())
+  name      String  @db.VarChar(255)
+  location  Int[]
+  Users     Users[]
+}
